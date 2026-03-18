@@ -1,65 +1,190 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-    <title>IKT MONITOR</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="manifest" href="manifest.json">
+    <title>IKT MONITOR I728</title>
     <style>
-        /* Gaya baju aplikasi */
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
-        .kotak { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        h1 { color: #d32f2f; font-size: 20px; text-align: center; }
-        label { display: block; margin: 10px 0 5px; font-weight: bold; }
-        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: #d32f2f; color: white; border: none; border-radius: 5px; margin-top: 15px; font-weight: bold; }
-        .hasil { font-size: 24px; color: #d32f2f; font-weight: bold; text-align: center; }
+        :root { --red: #d32f2f; --yellow: #ffeb3b; --bg: #f8f9fa; }
+        body { font-family: sans-serif; margin: 0; background: var(--bg); padding-bottom: 80px; }
+        .header { background: var(--red); color: white; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 10; }
+        .tab-bar { display: flex; background: white; border-bottom: 2px solid #ddd; }
+        .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: bold; }
+        .tab.active { color: var(--red); border-bottom: 3px solid var(--red); }
+        .container { padding: 15px; }
+        .card { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .stat-label { font-size: 11px; color: #777; text-transform: uppercase; }
+        .stat-val { font-size: 16px; font-weight: bold; color: var(--red); }
+        .input-group { margin-bottom: 15px; }
+        label { display: block; font-size: 13px; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { background: var(--red); color: white; border: none; width: 100%; padding: 12px; border-radius: 5px; font-weight: bold; }
+        .negative { color: red; }
+        .positive { color: green; }
     </style>
 </head>
 <body>
 
-    <div class="kotak">
-        <h1>MONITORING IKT I728</h1>
-        <p style="text-align: center;">Target Sales: Rp 274.182.874</p>
+<div class="header">
+    <strong>MONITORING IKT - KERTAYASA I728</strong><br>
+    <small id="current-date"></small>
+</div>
+
+<div class="tab-bar">
+    <div class="tab active" onclick="switchTab('dashboard')">DASHBOARD</div>
+    <div class="tab" onclick="switchTab('input')">INPUT</div>
+</div>
+
+<div id="dashboard-view" class="container">
+    <div class="card">
+        <label>Pencapaian Retail (Net Sales)</label>
+        <div class="stat-val" id="disp-sales">Rp 0</div>
+        <progress id="prog-sales" value="0" max="100" style="width:100%"></progress>
+        <small id="gap-sales">Gap: Rp 0</small>
     </div>
 
-    <div class="kotak">
-        <div id="status-apc">
-            <p>Pencapaian APC Hari Ini:</p>
-            <div class="hasil" id="txt-apc">Rp 0</div>
+    <div class="grid">
+        <div class="card">
+            <div class="stat-label">APC (Struk)</div>
+            <div class="stat-val" id="disp-apc">Rp 0</div>
+            <small id="apc-status"></small>
+        </div>
+        <div class="card">
+            <div class="stat-label">GM %</div>
+            <div class="stat-val" id="disp-gm">0%</div>
+            <small id="gm-status"></small>
         </div>
     </div>
 
-    <div class="kotak">
-        <h3>Input Data Toko</h3>
-        <label>Total Sales (Rp)</label>
-        <input type="number" id="input-sales" placeholder="Contoh: 5000000">
-        
-        <label>Total Struk (STD)</label>
-        <input type="number" id="input-std" placeholder="Contoh: 100">
-
-        <button onclick="hitung()">SIMPAN & UPDATE</button>
+    <div class="card">
+        <strong>Indikator IKT (QTY)</strong>
+        <hr>
+        <div class="grid">
+            <div><small>PSM</small><div id="ikt-psm" class="stat-val">0 / 1092</div></div>
+            <div><small>PWP</small><div id="ikt-pwp" class="stat-val">0 / 713</div></div>
+            <div><small>SEGA</small><div id="ikt-sega" class="stat-val">0 / 152</div></div>
+            <div><small>STD TOKO</small><div id="ikt-std" class="stat-val">0 / 191</div></div>
+        </div>
     </div>
+</div>
 
-    <script>
-        // Rumus Bayi: APC = Sales dibagi Struk
-        function hitung() {
-            let sales = document.getElementById('input-sales').value;
-            let std = document.getElementById('input-std').value;
+<div id="input-view" class="container" style="display:none">
+    <div class="card">
+        <form id="form-ikt">
+            <div class="input-group">
+                <label>Shift</label>
+                <select id="shift"><option>Pagi</option><option>Siang</option></select>
+            </div>
+            <div class="input-group">
+                <label>Sales Retail (Net)</label>
+                <input type="number" id="in-sales" required>
+            </div>
+            <div class="input-group">
+                <label>Total STD (Struk)</label>
+                <input type="number" id="in-std" required>
+            </div>
+            <div class="input-group">
+                <label>QTY PSM</label>
+                <input type="number" id="in-psm">
+            </div>
+            <div class="input-group">
+                <label>QTY PWP</label>
+                <input type="number" id="in-pwp">
+            </div>
+            <div class="input-group">
+                <label>QTY SEGA</label>
+                <input type="number" id="in-sega">
+            </div>
+            <button type="submit">SIMPAN DATA</button>
+        </form>
+    </div>
+</div>
 
-            if(sales > 0 && std > 0) {
-                let apc = sales / std;
-                // Kasih titik-titik biar cantik angkanya
-                document.getElementById('txt-apc').innerText = "Rp " + Math.round(apc).toLocaleString('id-ID');
-                alert("Data Berhasil dihitung!");
-            } else {
-                alert("Isi dulu angkanya ya!");
-            }
-        }
+<script>
+    // Konfigurasi Target dari File Excel [cite: 48, 81]
+    const TARGET = {
+        NET_SALES: 274182874,
+        GM_PCT: 0.17277,
+        APC: 46306,
+        PSM: 1092,
+        PWP: 713,
+        SEGA: 152,
+        STD_TOKO: 191
+    };
 
-        // Aktifkan Si Satpam (Service Worker)
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
-        }
-    </script>
+    let db;
+    const request = indexedDB.open("IKT_Storage", 1);
+    request.onupgradeneeded = e => {
+        db = e.target.result;
+        db.createObjectStore("daily_stats", { keyPath: "id", autoIncrement: true });
+    };
+    request.onsuccess = e => { db = e.target.result; updateUI(); };
+
+    function switchTab(view) {
+        document.getElementById('dashboard-view').style.display = view === 'dashboard' ? 'block' : 'none';
+        document.getElementById('input-view').style.display = view === 'input' ? 'block' : 'none';
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+    }
+
+    document.getElementById('form-ikt').onsubmit = e => {
+        e.preventDefault();
+        const entry = {
+            date: new Date().toLocaleDateString(),
+            sales: parseFloat(document.getElementById('in-sales').value),
+            std: parseInt(document.getElementById('in-std').value),
+            psm: parseInt(document.getElementById('in-psm').value || 0),
+            pwp: parseInt(document.getElementById('in-pwp').value || 0),
+            sega: parseInt(document.getElementById('in-sega').value || 0)
+        };
+        const tx = db.transaction("daily_stats", "readwrite");
+        tx.objectStore("daily_stats").add(entry);
+        tx.oncomplete = () => {
+            alert("Data Berhasil Disimpan!");
+            document.getElementById('form-ikt').reset();
+            switchTab('dashboard');
+            updateUI();
+        };
+    };
+
+    function updateUI() {
+        const tx = db.transaction("daily_stats", "readonly");
+        const store = tx.objectStore("daily_stats");
+        const getItems = store.getAll();
+
+        getItems.onsuccess = () => {
+            const data = getItems.result;
+            const totals = data.reduce((acc, curr) => {
+                acc.sales += curr.sales;
+                acc.std += curr.std;
+                acc.psm += curr.psm;
+                acc.pwp += curr.pwp;
+                acc.sega += curr.sega;
+                return acc;
+            }, {sales:0, std:0, psm:0, pwp:0, sega:0});
+
+            // Rumus APC (Sales / STD) sesuai Rekap IKT 
+            const apcActual = totals.std > 0 ? (totals.sales / totals.std) : 0;
+            
+            // Render Dashboard
+            document.getElementById('disp-sales').innerText = "Rp " + totals.sales.toLocaleString('id-ID');
+            document.getElementById('gap-sales').innerText = "Gap: Rp " + (TARGET.NET_SALES - totals.sales).toLocaleString('id-ID');
+            document.getElementById('disp-apc').innerText = "Rp " + Math.round(apcActual).toLocaleString('id-ID');
+            
+            // IKT QTY Rendering 
+            document.getElementById('ikt-psm').innerText = `${totals.psm} / ${TARGET.PSM}`;
+            document.getElementById('ikt-pwp').innerText = `${totals.pwp} / ${TARGET.PWP}`;
+            document.getElementById('ikt-sega').innerText = `${totals.sega} / ${TARGET.SEGA}`;
+            document.getElementById('ikt-std').innerText = `${totals.std} / ${TARGET.STD_TOKO}`;
+        };
+    }
+
+    // Registrasi PWA
+    if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
+    document.getElementById('current-date').innerText = new Date().toDateString();
+</script>
+
 </body>
 </html>
