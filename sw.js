@@ -1,20 +1,10 @@
-// Nama catatannya
-const namaSimpanan = "ikt-v1";
+const CACHE_NAME = 'ikt-v1-i728';
+const assets = ['./', './index.html', './manifest.json'];
 
-// List file yang mau dijaga biar bisa dibuka pas offline
-self.addEventListener("install", (anu) => {
-  anu.waitUntil(
-    caches.open(namaSimpanan).then((simpanan) => {
-      return simpanan.addAll(["index.html", "manifest.json"]);
-    })
-  );
+self.addEventListener('install', e => {
+    e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(assets)));
 });
 
-// Kalau dipanggil pas gak ada sinyal, si satpam kasih file yang dia jaga
-self.addEventListener("fetch", (anu) => {
-  anu.respondWith(
-    caches.match(anu.request).then((hasil) => {
-      return hasil || fetch(anu.request);
-    })
-  );
+self.addEventListener('fetch', e => {
+    e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
 });
