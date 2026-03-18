@@ -1,15 +1,16 @@
 {
   "short_name": "IKT-I728",
-  "name": "Monitoring IKT Kertajaya",
-  "display": "standalone",
-  "start_url": "index.html",
-  "theme_color": "#d32f2f",
-  "background_color": "#ffffff",
+  "name": "Monitoring IKT Kertajaya I728",
   "icons": [
     {
       "src": "https://cdn-icons-png.flaticon.com/512/1055/1055644.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "sizes": "512x512"
     }
-  ]
+  ],
+  "start_url": "./index.html",
+  "background_color": "#d32f2f",
+  "display": "standalone",
+  "scope": "./",
+  "theme_color": "#d32f2f"
 }
