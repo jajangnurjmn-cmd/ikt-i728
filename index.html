@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>IKT MONITOR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        /* Gaya baju aplikasi */
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .kotak { background: white; padding: 15px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        h1 { color: #d32f2f; font-size: 20px; text-align: center; }
+        label { display: block; margin: 10px 0 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; background: #d32f2f; color: white; border: none; border-radius: 5px; margin-top: 15px; font-weight: bold; }
+        .hasil { font-size: 24px; color: #d32f2f; font-weight: bold; text-align: center; }
+    </style>
+</head>
+<body>
+
+    <div class="kotak">
+        <h1>MONITORING IKT I728</h1>
+        <p style="text-align: center;">Target Sales: Rp 274.182.874</p>
+    </div>
+
+    <div class="kotak">
+        <div id="status-apc">
+            <p>Pencapaian APC Hari Ini:</p>
+            <div class="hasil" id="txt-apc">Rp 0</div>
+        </div>
+    </div>
+
+    <div class="kotak">
+        <h3>Input Data Toko</h3>
+        <label>Total Sales (Rp)</label>
+        <input type="number" id="input-sales" placeholder="Contoh: 5000000">
+        
+        <label>Total Struk (STD)</label>
+        <input type="number" id="input-std" placeholder="Contoh: 100">
+
+        <button onclick="hitung()">SIMPAN & UPDATE</button>
+    </div>
+
+    <script>
+        // Rumus Bayi: APC = Sales dibagi Struk
+        function hitung() {
+            let sales = document.getElementById('input-sales').value;
+            let std = document.getElementById('input-std').value;
+
+            if(sales > 0 && std > 0) {
+                let apc = sales / std;
+                // Kasih titik-titik biar cantik angkanya
+                document.getElementById('txt-apc').innerText = "Rp " + Math.round(apc).toLocaleString('id-ID');
+                alert("Data Berhasil dihitung!");
+            } else {
+                alert("Isi dulu angkanya ya!");
+            }
+        }
+
+        // Aktifkan Si Satpam (Service Worker)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
